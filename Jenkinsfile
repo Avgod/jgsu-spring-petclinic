@@ -1,7 +1,9 @@
 properties([pipelineTriggers([githubPush()])])
 pipeline {
     agent any
-
+    environment {
+    docker=credentials('docker')
+    }
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
         maven "maven"
@@ -28,6 +30,7 @@ pipeline {
         stage('docker push'){
            steps {
             script{
+            sh 'docker login -u avgod $docker_USR --password-stdin'
             sh 'docker tag petclinic:$BUILD_NUMBER Avgod/petclinic:$BUILD_NUMBER'
             sh 'docker push Avgod/petclinic:$BUILD_NUMBER'
              }
@@ -46,8 +49,8 @@ pipeline {
             steps {
                 sh "mvn sonar:sonar \
                      -Dsonar.projectKey=java \
-                     -Dsonar.host.url=http://43.205.7.80:9000 \
-                     -Dsonar.login=7d29c5278f5aaf087726e9ca0367ef8e5c28dbec"
+                     -Dsonar.host.url=http:// \
+                     -Dsonar.login="
             }
         }
     }
